@@ -3,7 +3,13 @@ const conexao = require('../conexaoDB')
 const listarAutores = async (req, res) => {
 
     try{
-        const { rows: autores } = await conexao.query('select * from autores');
+        const { rows: autores } = await conexao.query(`select * from autores`);
+
+        for (const autor of autores) {
+            const {rows: livros} = await conexao.query(`select * from livros where autor_id = $1`, [autor.id]);
+            autor.livros = livros;
+            
+        }
 
         if (autores.rowCount === 0){
             return res.status(404).json('Não existe registro nesta tabela.');
@@ -19,7 +25,7 @@ const listarAutores = async (req, res) => {
 const obterAutor = async (req, res) => {
     const { id } = req.params;
     try{
-        const query = 'select * from autores where id = $1'
+        const query = `select * from autores where id = $1`
         const autor = await conexao.query(query, [id]);
         
         if (autor.rowCount === 0){
@@ -39,7 +45,7 @@ const cadastrarAutor = async (req, res) => {
         return res.status(400).json("O campo nome é obrigatório.");
     }
     try{
-        const query = 'insert into autores (nome, idade) values ($1, $2)'
+        const query = `insert into autores (nome, idade) values ($1, $2)`
         const autor = await conexao.query(query , [nome, idade]);
 
         if (autor.rowCount = 0){
@@ -57,7 +63,7 @@ const atualizarAutor = async (req, res) => {
     const { id } = req.params;
     const {nome, idade} = req.body;
     try{
-        const autor = await conexao.query('select * from autores where id = $1', [id]);
+        const autor = await conexao.query(`select * from autores where id = $1`, [id]);
         
         if (autor.rowCount === 0){
             return res.status(404).json('Autor não encontrado.');
@@ -65,7 +71,7 @@ const atualizarAutor = async (req, res) => {
         if (!nome){
             return res.status(400).json("O campo nome é obrigatório.");
         }
-        const query = 'update autores set nome = $1, idade = $2 where id = $3'
+        const query = `update autores set nome = $1, idade = $2 where id = $3`
         const autorAtualizado = await conexao.query(query, [nome, idade, id]);
 
         if (autor.rowCount === 0){
@@ -82,13 +88,13 @@ const atualizarAutor = async (req, res) => {
 const deletarAutor = async (req, res) => {
     const { id } = req.params;
     try{
-        const autor = await conexao.query('select * from autores where id = $1', [id]);
+        const autor = await conexao.query(`select * from autores where id = $1`, [id]);
         
         if (autor.rowCount === 0){
             return res.status(404).json('Autor não encontrado.');
         }   
 
-        const query = 'delete from autores where id = $1'
+        const query = `delete from autores where id = $1`
         const autorAtualizado = await conexao.query(query, [id]);
 
         if (autor.rowCount === 0){
