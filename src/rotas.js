@@ -1,8 +1,8 @@
 const express = require("express");
-const autores = require('./controladores/autores.js');
-const livros =  require('./controladores/livros.js');
-const usuarios = require('./controladores/usuarios.js');
-const usuarioLogin = require('./controladores/login.js');
+const autores = require('../src/controladores/autores.js');
+const livros =  require('../src/controladores/livros.js');
+const usuarios = require('../src/controladores/usuarios.js');
+const usuarioLogin = require('../src/controladores/login.js');
 const rotas = express();
 
 

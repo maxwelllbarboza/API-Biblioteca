@@ -1,7 +1,7 @@
 const conexao = require('../conexaoDB');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const jwtSecret = require('../jwt_secret.js');
+const jwtSecret = require('../jwt_secret');
 
 
 const login = async(req, res) => {

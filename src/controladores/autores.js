@@ -1,6 +1,6 @@
 const conexao = require('../conexaoDB');
 const jwt = require('jsonwebtoken');
-const jwtSecret = require('../jwt_secret.js');
+const jwtSecret = require('../jwt_secret');
 
 const listarAutores = async (req, res) => {
 
