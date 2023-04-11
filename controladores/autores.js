@@ -1,4 +1,6 @@
-const conexao = require('../conexaoDB')
+const conexao = require('../conexaoDB');
+const jwt = require('jsonwebtoken');
+const jwtSecret = require('../jwt_secret.js');
 
 const listarAutores = async (req, res) => {
 
@@ -7,18 +9,14 @@ const listarAutores = async (req, res) => {
 
         for (const autor of autores) {
             const {rows: livros} = await conexao.query(`select * from livros where autor_id = $1`, [autor.id]);
-            autor.livros = livros;
-            
+            autor.livros = livros;            
         }
-
         if (autores.rowCount === 0){
             return res.status(404).json('Não existe registro nesta tabela.');
         }
         return res.status(200).json(autores);
-
     }catch (error){
         return res.status(400).json(error.message);
-
     }
 }
 
@@ -40,10 +38,16 @@ const obterAutor = async (req, res) => {
 }
 
 const cadastrarAutor = async (req, res) => {
-    const {nome, idade} = req.body;
-    if (!nome){
-        return res.status(400).json("O campo nome é obrigatório.");
+    const {nome, idade, token} = req.body;
+    if (!nome){return res.status(400).json("O campo nome é obrigatório.");}
+    if (!token){return res.status(400).json("O token é obrigatório.");}    
+    try{
+        const usuario = jwt.verify(token, jwtSecret);
+        console.log(`${usuario.nome} está criando um autor`);
+    }catch (error){
+        return res.status(400).json("O token é inválido.");
     }
+        
     try{
         const query = `insert into autores (nome, idade) values ($1, $2)`
         const autor = await conexao.query(query , [nome, idade]);
